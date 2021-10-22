@@ -1,0 +1,14 @@
+[Unit]
+Description=zookeeper.service
+After=network.target
+ConditionPathExists={{ ZK_BASE_DIR }}/apache-zookeeper-{{ ZK_VERSION }}-bin/conf/zoo.cfg
+[Service]
+Type=forking
+#这里如果使用的oracle jdk 自定义安装，需要配置java的环境变量
+#Environment="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin://usr/local/jdk1.8.0_231/bin"
+User=root
+Group=root
+ExecStart={{ ZK_BASE_DIR }}/apache-zookeeper-{{ ZK_VERSION }}-bin/bin/zkServer.sh start
+ExecStop={{ ZK_BASE_DIR }}/apache-zookeeper-{{ ZK_VERSION }}-bin/bin/zkServer.sh stop
+[Install]
+WantedBy=multi-user.target

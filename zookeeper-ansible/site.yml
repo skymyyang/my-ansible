@@ -1,0 +1,9 @@
+#- hosts: chrony
+#  roles:
+#  - { role: chrony, when: "groups['chrony']|length > 0" }
+
+- hosts:
+  - zookeeper 
+  roles:
+  - zookeeper
+    

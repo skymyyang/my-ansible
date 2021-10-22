@@ -1,0 +1,6 @@
+- name: Install openjdk11
+  yum:
+    name:
+      - java-11-openjdk
+      - java-11-openjdk-headless
+    state: present

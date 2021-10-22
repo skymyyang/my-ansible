@@ -1,0 +1,56 @@
+---
+- name: ensure zookeeper directory exists
+  file:
+    path: "{{ item }}"
+    state: directory
+    recurse: yes
+  with_items:
+    - "{{ ZK_BASE_DIR }}"
+    - "{{ ZK_DATA_DIR }}"
+    - "{{ ZK_LOGS_DIR }}"
+
+#- name: download zookeeper tag
+#  get_url:
+#    url: "https://dlcdn.apache.org/zookeeper/zookeeper-{{ ZK_VERSION }}/apache-zookeeper-{{ ZK_VERSION }}-bin.tar.gz"
+#    dest: /usr/local/src
+#    mode: '0440'
+#  tags: get_zookeeper_tag
+
+- name: unarchive zookeeper tag
+  unarchive:
+    src: "apache-zookeeper-{{ ZK_VERSION }}-bin.tar.gz"
+    dest: "{{ ZK_BASE_DIR }}"
+
+
+- name: copy configure file
+  template:
+    src: zoo.cfg.j2
+    dest: "{{ ZK_BASE_DIR }}/apache-zookeeper-{{ ZK_VERSION }}-bin/conf/zoo.cfg"
+
+- name: create myid file
+  shell: "echo {{ myid }} > {{ ZK_DATA_DIR }}/myid"
+  
+
+- name: configure zookeeper service
+  template:
+    src: zookeeper.service.j2
+    dest: /usr/lib/system/systemd/zookeeper.service
+
+- name: just force systemd to reread configs
+  systemd:
+    daemon_reload: yes
+
+- name: start zookeeper service
+  service:
+    name: zookeeper
+    state: restarted
+    enabled: yes
+  tags: restart_zookeeper
+
+- name: Wait for the zookeeper service to start by polling
+  shell: "systemctl is-active zookeeper.service"
+  register: zookeeper_status
+  until: '"active" in zookeeper_status.stdout'
+  retries: 3
+  delay: 3
+  tags: restart_zookeeper
