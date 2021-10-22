@@ -34,7 +34,7 @@
 - name: configure zookeeper service
   template:
     src: zookeeper.service.j2
-    dest: /usr/lib/system/systemd/zookeeper.service
+    dest: /usr/lib/systemd/system/zookeeper.service
 
 - name: just force systemd to reread configs
   systemd:
