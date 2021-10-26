@@ -1,0 +1,45 @@
+
+---
+- name: Ensure kafka directory exists
+  file:
+    path: "{{ item }}"
+    state: directory
+    recurse: yes
+  with_items:
+    - "{{ KAFKA_BASE_DIR }}"
+    - "{{ KAFKA_LOGS_DIR }}"
+
+- name: Unarchive kafka tar
+  unarchive:
+    src: "kafka_{{ KAFKA_VERSION }}.tgz"
+    dest: "{{ KAFKA_BASE_DIR }}"
+
+- name: Copy configure file
+  template:
+    src: server.properties.j2
+    dest: "{{ KAFKA_BASE_DIR }}/kafka_{{ KAFKA_VERSION }}/config/server.properties"
+
+- name: Configure kafka service
+  template:
+    src: kafka.service.j2
+    dest: /usr/lib/systemd/system/kafka.service
+
+- name: Just force systemd to reread configs
+  systemd:
+    daemon_reload: yes
+
+- name: Start kafka service
+  service:
+    name: kafka
+    state: restarted
+    enabled: yes
+  tags: restart_kafka
+
+- name: Wait for the kafka service to start by polling
+  shell: "systemctl is-active kafka.service"
+  register: kafka_status
+  until: '"active" in kafka_status.stdout'
+  retries: 3
+  delay: 3
+  tags: restart_kafka
+   

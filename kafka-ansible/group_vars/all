@@ -1,0 +1,19 @@
+ntp_servers:
+  - "ntp1.aliyun.com"
+  - "time1.cloud.tencent.com"
+  - "0.cn.pool.ntp.org"
+
+local_network: "0.0.0.0/0"
+
+ZK_BASE_DIR: "/usr/local/apache-zookeeper"
+ZK_VERSION: "3.6.3"
+ZK_DATA_DIR: "/usr/local/apache-zookeeper/data"
+ZK_LOGS_DIR: "/usr/local/apache-zookeeper/logs"
+zk_server1_hostname: 192.168.227.130
+zk_server2_hostname: 192.168.227.131
+zk_server3_hostname: 192.168.227.132
+
+KAFKA_BASE_DIR: "/usr/local/kafka"
+KAFKA_VERSION: "2.12-2.8.1"
+KAFKA_LOGS_DIR: "/usr/local/kafka/data/logs"
+zookeeper_connect: "192.168.227.130:2181,192.168.227.131:2181,192.168.227.132:2181/kafka"

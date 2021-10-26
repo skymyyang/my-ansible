@@ -1,0 +1,17 @@
+[Unit]
+Description=Apache Kafka server (broker)
+Documentation=http://kafka.apache.org/documentation.html
+Requires=network.targe zookeeper.service
+After=network.target zookeeper.service
+
+[Service]
+Type=simple
+#这里如果使用的oracle jdk 自定义安装，需要配置java的环境变量
+#Environment="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin://usr/local/jdk1.8.0_231/bin"
+User=root
+Group=root
+ExecStart={{ KAFKA_BASE_DIR }}/kafka_{{ KAFKA_VERSION }}/bin/kafka-server-start.sh {{ KAFKA_BASE_DIR }}/kafka_{{ KAFKA_VERSION }}/config/server.properties
+ExecStop={{ KAFKA_BASE_DIR }}/kafka_{{ KAFKA_VERSION }}/bin/kafka-server-stop.sh
+
+[Install]
+WantedBy=multi-user.target

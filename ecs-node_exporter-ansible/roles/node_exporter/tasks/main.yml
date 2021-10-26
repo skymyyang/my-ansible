@@ -1,0 +1,36 @@
+- name: Install dependent tools
+  yum:
+    name:
+      - yum-utils
+      - device-mapper-persistent-data
+      - lvm2
+    state: present
+  ignore_errors: true
+
+- name: Configure docker-ce Yum warehouse
+  template:
+    src: docker-ce.repo.j2
+    dest: /etc/yum.repos.d/docker-ce.repo 
+    mode: '0644'
+
+- name: Install docker-ce
+  yum:
+    name: docker-ce
+    state: present 
+
+- name: Ensure docker config file directory exists
+  file:
+    path: /etc/docker
+    state: directory
+
+- name: Copy config file 
+  template:
+    src: daemon.json.j2
+    dest: /etc/docker/daemon.json
+    mode: '0644'
+
+- name: Start docker service
+  service:
+    name: docker
+    state: started
+    enabled: yes
