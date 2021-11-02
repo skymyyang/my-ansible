@@ -22,7 +22,11 @@
     dest: /etc/security/limits.conf
     insertbefore: '# End of file'
     block: |
-      root soft nofile 65535
-      root hard nofile 65535
-      * soft nofile 65535
-      * hard nofile 65535
+      *       soft    nproc   131072
+      *       hard    nproc   131072
+      *       soft    nofile  131072
+      *       hard    nofile  131072
+      root    soft    nproc   131072
+      root    hard    nproc   131072
+      root    soft    nofile  131072
+      root    hard    nofile  131072
