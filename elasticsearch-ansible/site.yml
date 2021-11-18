@@ -1,0 +1,6 @@
+- hosts:
+   - elnode
+  roles:
+  - base
+  - chrony
+  - elasticsearch  

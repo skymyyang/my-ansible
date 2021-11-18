@@ -1,0 +1,4 @@
+[elnode]
+192.168.227.200 Node_Name=node-c1
+192.168.227.201 Node_Name=node-c2
+192.168.227.202 Node_Name=node-c3

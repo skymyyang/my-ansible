@@ -1,0 +1,9 @@
+Elastic_Search_Base: "/usr/local/elasticsearch-{{ ES_VERSION }}"
+Elastic_Search_Data: "/data/elasticsearch"
+Elastic_Search_Logs: "/data/elasticsearch/logs"
+ES_VERSION: "7.14.0"
+Cluster_Name: "myapp-es-cluster"
+ES_USER: "elasticsearch"
+ES_GROUP: "elasticsearch"
+Discovery_Seed_Hosts: '"192.168.227.200:9300", "192.168.227.201:9300", "192.168.227.202:9300"'
+Cluster_Initial_Master_Nodes: '"node-c1", "node-c2", "node-c3"'

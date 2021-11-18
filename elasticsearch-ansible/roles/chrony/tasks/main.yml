@@ -1,0 +1,32 @@
+---
+#- name: Change timezone
+#  shell: unalias cp;cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+#  ignore_errors: true
+#In consideration of generality, time zones need to be defined by themselves
+- name: Install chrony client apt
+  apt:
+    name: chrony
+    state: present
+  when: 'ansible_distribution in ["Ubuntu","Debian"]'
+
+- name: Install chrony client yum
+  yum:
+    name: chrony
+    state: present
+  when: 'ansible_distribution in ["CentOS","RedHat","Amazon","Aliyun"]'
+
+- name: Start chrony services apt
+  service:
+    name: chrony
+    state: started
+    enabled: yes
+  when: 'ansible_distribution in ["Ubuntu","Debian"]'
+
+- name: Start chrony services yum
+  service:
+    name: chronyd
+    state: started
+    enabled: yes
+  when: 'ansible_distribution in ["CentOS","RedHat","Amazon","Aliyun"]'
+
+

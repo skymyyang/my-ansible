@@ -1,0 +1,13 @@
+cluster.name: {{ Cluster_Name }}
+node.name: {{ Node_Name }}
+node.master: true
+node.data: true
+path.data: {{ Elastic_Search_Data }}
+path.logs: {{ Elastic_Search_Logs }}
+network.host: 0.0.0.0
+http.port: 9200
+transport.tcp.port: 9300
+transport.tcp.compress: true
+discovery.seed_hosts: [ {{ Discovery_Seed_Hosts }}]
+cluster.initial_master_nodes: [ {{ Cluster_Initial_Master_Nodes }} ]
+gateway.recover_after_nodes: 3

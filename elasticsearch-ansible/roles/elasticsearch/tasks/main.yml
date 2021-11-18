@@ -1,0 +1,72 @@
+---
+- name: Add elasticsearch group
+  group:
+    name: "{{ ES_GROUP }}"
+    state: present
+- name: Add elasticsearch user
+  user:
+    name: "{{ ES_USER }}"
+    group: "{{ ES_GROUP }}"
+    create_home: False
+    shell: /sbin/nologin
+
+- name: Ensure elasticsearch directory exists
+  file:
+    path: "{{ item }}"
+    state: directory
+    recurse: yes
+    owner: "{{ ES_USER }}"
+    group: "{{ ES_GROUP }}"
+  with_items:
+    - "{{ Elastic_Search_Data }}"
+    - "{{ Elastic_Search_Logs }}"
+
+- name: Add mappings to /etc/hosts
+  blockinfile:
+    path: /etc/hosts
+    block: |
+      {{ item.ip }} {{ item.name }}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ item.name }}"
+  loop:
+    - { name: node-e1, ip: 192.168.227.200 }
+    - { name: node-e2, ip: 192.168.227.201 }
+    - { name: node-e3, ip: 192.168.227.202 } 
+
+- name: Install packages
+  unarchive:
+    src: "elasticsearch-{{ ES_VERSION }}-{{ ansible_system.lower() }}-{{ ansible_architecture }}.tar.gz"
+    dest: /usr/local
+    owner: "{{ ES_USER }}"
+    group: "{{ ES_GROUP }}"
+
+- name: Configure es config file
+  template:
+    src: elasticsearch.yml.j2
+    dest: "/usr/local/elasticsearch-{{ ES_VERSION }}/config/elasticsearch.yml"
+    owner: "{{ ES_USER }}"
+    group: "{{ ES_GROUP }}"
+    backup: yes
+
+- name: Configure elasticsearch service
+  template:
+    src: elasticsearch.service.j2
+    dest: /etc/systemd/system/elasticsearch.service
+
+- name: Just force systemd to reread configs
+  systemd:
+    daemon_reload: yes
+
+- name: Start elasticsearch service
+  service:
+    name: elasticsearch
+    state: restarted
+    enabled: yes
+  tags: restart_elasticsearch
+
+- name: Wait for the elasticsearch service to start by polling
+  shell: "systemctl is-active elasticsearch.service"
+  register: elasticsearch_status
+  until: '"active" in elasticsearch_status.stdout'
+  retries: 3
+  delay: 3
+  tags: restart_elasticsearch
